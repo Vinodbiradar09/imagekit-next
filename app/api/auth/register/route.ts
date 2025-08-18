@@ -7,7 +7,7 @@ export async function POST(request : NextRequest) {
     try {
         await dbConnect();
         if(!email || !password){
-            NextResponse.json(
+          return NextResponse.json(
                 {
                     message : "Email and password are required to register the user",
                     success : false,
@@ -17,7 +17,7 @@ export async function POST(request : NextRequest) {
 
         const existingUser = await User.findOne({email});
         if(existingUser){
-            NextResponse.json(
+           return NextResponse.json(
                 {
                     message : "User already registered",
                     success : false,
@@ -33,7 +33,7 @@ export async function POST(request : NextRequest) {
         )
 
         if(!user){
-            NextResponse.json(
+           return NextResponse.json(
                 {
                     message : "Failed to register the user due to internal server error",
                     success : false,
