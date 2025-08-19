@@ -49,7 +49,8 @@ export default function Login() {
   };
 
   return (
-    <Form {...form}>
+    <div>
+          <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
         <FormField
           control={form.control}
@@ -91,5 +92,11 @@ export default function Login() {
         </Button>
       </form>
     </Form>
+
+    <div>
+        <p> Dont have and account</p>
+        <Link href='/register'>Register</Link>
+    </div>
+    </div>
   );
 }
