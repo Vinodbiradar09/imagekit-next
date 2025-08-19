@@ -1,4 +1,4 @@
-"use client";
+"use client"; // This component must be a client component
 
 import {
   ImageKitAbortError,
@@ -7,7 +7,7 @@ import {
   ImageKitUploadNetworkError,
   upload,
 } from "@imagekit/next";
-import React, { useRef, useState } from "react";
+import { useRef, useState } from "react";
 
 interface FileUploadProps {
   onSuccess: (res: any) => void;
@@ -18,6 +18,8 @@ interface FileUploadProps {
 const FileUpload = ({ onSuccess, onProgress, fileType }: FileUploadProps) => {
   const [uploading, setUploading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+
+  //optional validation
 
   const validateFile = (file: File) => {
     if (fileType === "video") {
@@ -33,6 +35,7 @@ const FileUpload = ({ onSuccess, onProgress, fileType }: FileUploadProps) => {
 
   const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
+
     if (!file || !validateFile(file)) return;
 
     setUploading(true);
@@ -42,8 +45,6 @@ const FileUpload = ({ onSuccess, onProgress, fileType }: FileUploadProps) => {
       const authRes = await fetch("/api/auth/imagekit-auth");
       const auth = await authRes.json();
 
-      
-
       const res = await upload({
         file,
         fileName: file.name,
@@ -52,17 +53,16 @@ const FileUpload = ({ onSuccess, onProgress, fileType }: FileUploadProps) => {
         expire: auth.expire,
         token: auth.token,
         onProgress: (event) => {
-          if (event.lengthComputable && onProgress) {
+          if(event.lengthComputable && onProgress){
             const percent = (event.loaded / event.total) * 100;
-            onProgress(Math.round(percent));
+            onProgress(Math.round(percent))
           }
         },
+        
       });
-        onSuccess(res)
-
+      onSuccess(res)
     } catch (error) {
-        console.error("Upload failed" , error);
-        throw new Error("Upload failed");
+        console.error("Upload failed", error)
     } finally {
         setUploading(false)
     }
@@ -70,10 +70,14 @@ const FileUpload = ({ onSuccess, onProgress, fileType }: FileUploadProps) => {
 
   return (
     <>
-    <input type="file" accept={fileType === "video" ? "video/*" : "image/*"} onChange={handleFileChange}/>
-       {uploading && <span>Loading....</span>}
+      <input
+        type="file"
+        accept={fileType === "video" ? "video/*" : "image/*"}
+        onChange={handleFileChange}
+      />
+      {uploading && <span>Loading....</span>}
     </>
-  )
+  );
 };
 
-export default FileUpload
+export default FileUpload;

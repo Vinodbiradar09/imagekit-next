@@ -1,6 +1,7 @@
-import { SessionProvider } from "next-auth/react";
+"use client"
+
 import { ImageKitProvider } from "@imagekit/next";
-import React from "react";
+import { SessionProvider } from "next-auth/react";
 
 const urlEndPoint = process.env.NEXT_PUBLIC_URL_ENDPOINT!;
 
