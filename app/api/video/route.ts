@@ -8,25 +8,45 @@ import { videoSchema } from "@/schemas/videoSchema";
 
 export async function GET(request: NextRequest) {
   try {
+  
     await dbConnect();
+    
+    console.log("📹 Fetching videos...");
     const videos = await Video.find({}).sort({ createdAt: -1 }).lean();
     
-    return NextResponse.json(videos, { status: 200 });
+    console.log(`✅ Found ${videos.length} videos`);
+    
+  
+    return NextResponse.json(videos || [], { 
+      status: 200,
+      headers: {
+        'Content-Type': 'application/json',
+      }
+    });
   } catch (error) {
-    console.error("Error while getting the videos:", error);
+    console.error("❌ Error while getting the videos:", error);
+    
+   
     return NextResponse.json(
       {
         message: "Internal server issue",
         success: false,
+        videos: [] 
       },
-      { status: 500 }
+      { 
+        status: 500,
+        headers: {
+          'Content-Type': 'application/json',
+           'Access-Control-Allow-Origin': '*',
+        'Access-Control-Allow-Methods': 'GET',
+        }
+      }
     );
   }
 }
 
 export async function POST(request: NextRequest) {
   try {
-
     const session = await getServerSession(authOptions);
     if (!session) {
       return NextResponse.json(
@@ -39,13 +59,11 @@ export async function POST(request: NextRequest) {
     }
 
     await dbConnect();
-    const body:IVideo = await request.json();
+    const body: IVideo = await request.json();
 
- 
     const validationResult = videoSchema.safeParse(body);
     
     if (!validationResult.success) {
-
       const errors = Object.values(validationResult.error.flatten().fieldErrors)
         .flat()
         .filter(Boolean);
@@ -81,6 +99,7 @@ export async function POST(request: NextRequest) {
         { status: 500 }
       );
     }
+    
     return NextResponse.json(
       {
         message: "Video created successfully",
