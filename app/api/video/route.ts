@@ -10,51 +10,49 @@ export async function GET(request: NextRequest) {
   try {
     await dbConnect();
     const videos = await Video.find({}).sort({ createdAt: -1 }).lean();
-    if (!videos || videos.length === 0) {
-      return NextResponse.json([], { status: 200 });
-    }
-
-    return NextResponse.json(videos);
+    
+    return NextResponse.json(videos, { status: 200 });
   } catch (error) {
-    console.error("Error while getting the videos ", error);
+    console.error("Error while getting the videos:", error);
     return NextResponse.json(
       {
         message: "Internal server issue",
         success: false,
       },
-      {
-        status: 500,
-      }
+      { status: 500 }
     );
   }
 }
 
 export async function POST(request: NextRequest) {
   try {
+
     const session = await getServerSession(authOptions);
     if (!session) {
-        console.log("ses" , session);
       return NextResponse.json(
         {
-          message: "Unauthorized User , please login",
+          message: "Unauthorized User, please login",
           success: false,
         },
-        { status: 400 }
+        { status: 401 } 
       );
     }
 
     await dbConnect();
-    const body: IVideo = await request.json();
+    const body:IVideo = await request.json();
 
-    const validationResult = videoSchema.safeParse({ body });
+ 
+    const validationResult = videoSchema.safeParse(body);
+    
     if (!validationResult.success) {
-      const errors = validationResult.error.format()._errors || [];
+
+      const errors = Object.values(validationResult.error.flatten().fieldErrors)
+        .flat()
+        .filter(Boolean);
+
       return NextResponse.json(
         {
-          message:
-            errors.length > 0
-              ? errors.join(", ")
-              : "All the fields are required",
+          message: errors.length > 0 ? errors.join(", ") : "Validation failed",
           success: false,
         },
         { status: 400 }
@@ -66,10 +64,10 @@ export async function POST(request: NextRequest) {
       description: body.description,
       videoUrl: body.videoUrl,
       thumbnailUrl: body.thumbnailUrl,
-      controls: body?.controls ?? true,
+      controls: body.controls ?? true,
       transformation: {
-        height: 1920,
-        width: 1080,
+        height: body.transformation?.height ?? 1920,
+        width: body.transformation?.width ?? 1080,
         quality: body.transformation?.quality ?? 100,
       },
     });
@@ -77,46 +75,29 @@ export async function POST(request: NextRequest) {
     if (!video) {
       return NextResponse.json(
         {
-          message: "Failed to create a video",
+          message: "Failed to create video",
           success: false,
         },
-        { status: 400 }
+        { status: 500 }
       );
     }
-
-    return NextResponse.json(video);
-  } catch (error) {
-    console.error("Error while creating the video", error);
     return NextResponse.json(
-      { message: "Failed to create video" , success : false },
+      {
+        message: "Video created successfully",
+        success: true,
+        data: video,
+      },
+      { status: 201 }
+    );
+
+  } catch (error) {
+    console.error("Error while creating the video:", error);
+    return NextResponse.json(
+      { 
+        message: "Internal server error", 
+        success: false 
+      },
       { status: 500 }
     );
   }
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-// okay now we have to handle the video upload in the image-kit ,
-// the frontend has authenticated with image-kit cred , how when he uploads the video the video will get uploaded in the imagekit and it sends some detail of the video now in frontend we will make one form were we collect all the info like title and all and the details sent by the image-kit and merges both and save in db

@@ -3,6 +3,17 @@ import Link from "next/link";
 import { IVideo } from "@/models/Video";
 
 export default function VideoComponent({ video }: { video: IVideo }) {
+  console.log("videoUrls", video.videoUrl);
+
+  // ✅ Extract path from full URL if it contains the full ImageKit URL
+  const getVideoPath = (url: string) => {
+    if (url.startsWith('https://ik.imagekit.io/')) {
+      // Remove the ImageKit domain to get just the path
+      return url.replace(process.env.NEXT_PUBLIC_URL_ENDPOINT!, '');
+    }
+    return url; // Already just a path
+  };
+
   return (
     <div className="card bg-base-100 shadow hover:shadow-lg transition-all duration-300">
       <figure className="relative px-4 pt-4">
@@ -12,14 +23,15 @@ export default function VideoComponent({ video }: { video: IVideo }) {
             style={{ aspectRatio: "9/16" }}
           >
             <IKVideo
-              path={video.videoUrl}
+              urlEndpoint={process.env.NEXT_PUBLIC_URL_ENDPOINT}
+              path={getVideoPath(video.videoUrl)} // ✅ Extract just the path
               transformation={[
                 {
                   height: "1920",
                   width: "1080",
                 },
               ]}
-              controls={video.controls}
+              controls={video.controls ?? true}
               className="w-full h-full object-cover"
             />
           </div>

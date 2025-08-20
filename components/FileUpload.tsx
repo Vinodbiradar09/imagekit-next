@@ -1,4 +1,4 @@
-"use client"; // This component must be a client component
+"use client"; 
 
 import {
   ImageKitAbortError,
@@ -19,23 +19,26 @@ const FileUpload = ({ onSuccess, onProgress, fileType }: FileUploadProps) => {
   const [uploading, setUploading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  //optional validation
-
   const validateFile = (file: File) => {
+    setError(null);
+    
     if (fileType === "video") {
       if (!file.type.startsWith("video/")) {
         setError("Please upload a valid video file");
+        return false;
       }
     }
     if (file.size > 100 * 1024 * 1024) {
       setError("File size must be less than 100 MB");
+      return false;
     }
     return true;
   };
 
   const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
-
+    console.log("Selected file:", file);
+    
     if (!file || !validateFile(file)) return;
 
     setUploading(true);
@@ -43,40 +46,76 @@ const FileUpload = ({ onSuccess, onProgress, fileType }: FileUploadProps) => {
 
     try {
       const authRes = await fetch("/api/auth/imagekit-auth");
-      const auth = await authRes.json();
+      if (!authRes.ok) {
+        throw new Error("Failed to get authentication");
+      }
+      
+      const authData = await authRes.json();
+      console.log("Auth response:", authData);
+
+   
+      const { authenticationParameters, publicKey } = authData;
+      const { signature, expire, token } = authenticationParameters;
 
       const res = await upload({
         file,
-        fileName: file.name,
-        publicKey: process.env.NEXT_PUBLIC_PUBLIC_KEY!,
-        signature: auth.signature,
-        expire: auth.expire,
-        token: auth.token,
+        fileName: `${Date.now()}-${file.name}`,
+        publicKey: publicKey, 
+        signature: signature, 
+        expire: expire,       
+        token: token,         
+        folder: "/videos",    
         onProgress: (event) => {
-          if(event.lengthComputable && onProgress){
+          if (event.lengthComputable && onProgress) {
             const percent = (event.loaded / event.total) * 100;
-            onProgress(Math.round(percent))
+            onProgress(Math.round(percent));
           }
         },
-        
       });
-      onSuccess(res)
+
+      console.log(" Upload successful! Response:", res);
+      onSuccess(res);
     } catch (error) {
-        console.error("Upload failed", error)
+      console.error(" Upload failed:", error);
+      
+      if (error instanceof ImageKitAbortError) {
+        setError("Upload was cancelled");
+      } else if (error instanceof ImageKitInvalidRequestError) {
+        setError("Invalid upload request: " + error.message);
+      } else if (error instanceof ImageKitServerError) {
+        setError("Server error during upload: " + error.message);
+      } else if (error instanceof ImageKitUploadNetworkError) {
+        setError("Network error during upload: " + error.message);
+      } else {
+        setError("Upload failed: " + (error as Error).message);
+      }
     } finally {
-        setUploading(false)
+      setUploading(false);
     }
   };
 
   return (
-    <>
+    <div className="w-full">
       <input
         type="file"
         accept={fileType === "video" ? "video/*" : "image/*"}
         onChange={handleFileChange}
+        disabled={uploading}
+        className="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100"
       />
-      {uploading && <span>Loading....</span>}
-    </>
+      
+      {uploading && (
+        <div className="mt-2 text-center">
+          <span className="text-blue-600">Uploading...</span>
+        </div>
+      )}
+      
+      {error && (
+        <div className="mt-2 text-red-600 text-sm">
+           {error}
+        </div>
+      )}
+    </div>
   );
 };
 
