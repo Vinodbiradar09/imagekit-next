@@ -11,10 +11,10 @@ export async function GET(request: NextRequest) {
   
     await dbConnect();
     
-    console.log("📹 Fetching videos...");
+    console.log(" Fetching videos");
     const videos = await Video.find({}).sort({ createdAt: -1 }).lean();
     
-    console.log(`✅ Found ${videos.length} videos`);
+    console.log(`Found ${videos.length} videos`);
     
   
     return NextResponse.json(videos || [], { 
@@ -24,7 +24,7 @@ export async function GET(request: NextRequest) {
       }
     });
   } catch (error) {
-    console.error("❌ Error while getting the videos:", error);
+    console.error(" Error while getting the videos:", error);
     
    
     return NextResponse.json(
@@ -38,7 +38,7 @@ export async function GET(request: NextRequest) {
         headers: {
           'Content-Type': 'application/json',
            'Access-Control-Allow-Origin': '*',
-        'Access-Control-Allow-Methods': 'GET',
+            'Access-Control-Allow-Methods': 'GET',
         }
       }
     );

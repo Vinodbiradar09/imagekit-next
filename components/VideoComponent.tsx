@@ -16,7 +16,7 @@ export default function VideoComponent({ video }: { video: IVideo }) {
 
   return (
     <div className="group relative bg-gradient-to-b from-gray-900/50 to-black/80 rounded-2xl overflow-hidden border border-gray-800/50 hover:border-gray-700 transition-all duration-500 hover:transform hover:scale-[1.02] hover:shadow-2xl">
-      {/* Video Container */}
+    
       <div className="relative aspect-[9/16] overflow-hidden">
         <IKVideo
           urlEndpoint={process.env.NEXT_PUBLIC_URL_ENDPOINT}
@@ -33,7 +33,7 @@ export default function VideoComponent({ video }: { video: IVideo }) {
           onLoadedData={() => setIsLoaded(true)}
         />
         
-        {/* Overlay */}
+      
         <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-black/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
           <div className="absolute inset-0 flex items-center justify-center">
             <Link 
@@ -45,21 +45,21 @@ export default function VideoComponent({ video }: { video: IVideo }) {
           </div>
         </div>
 
-        {/* Loading State */}
+      
         {!isLoaded && (
           <div className="absolute inset-0 bg-gray-900 flex items-center justify-center">
             <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-white"></div>
           </div>
         )}
 
-        {/* Video Duration Badge */}
+       
         <div className="absolute top-4 right-4 bg-black/70 backdrop-blur-sm text-white px-2 py-1 rounded-full text-xs font-medium flex items-center gap-1">
           <Clock className="w-3 h-3" />
           2:45
         </div>
       </div>
 
-      {/* Content */}
+   
       <div className="p-6">
         <Link
           href={`/videos/${video._id}`}
@@ -74,7 +74,7 @@ export default function VideoComponent({ video }: { video: IVideo }) {
           {video.description}
         </p>
 
-        {/* Stats */}
+      
         <div className="flex items-center justify-between text-xs text-gray-500">
           <div className="flex items-center gap-1">
             <Eye className="w-3 h-3" />
@@ -84,7 +84,7 @@ export default function VideoComponent({ video }: { video: IVideo }) {
         </div>
       </div>
 
-      {/* Gradient Border Effect */}
+    
       <div className="absolute inset-0 rounded-2xl bg-gradient-to-r from-blue-500/20 via-purple-500/20 to-pink-500/20 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none"></div>
     </div>
   );

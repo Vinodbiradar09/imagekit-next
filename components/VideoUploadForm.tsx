@@ -32,7 +32,7 @@ const VideoUploadForm = () => {
   });
 
   const handleVideoUploadSuccess = (uploadResult: any) => {
-    console.log("✅ Upload successful! Response:", uploadResult);
+    console.log(" Upload successful! Response:", uploadResult);
     
     setUploadedVideoData(uploadResult);
     form.setValue("videoUrl", uploadResult.url);
@@ -61,7 +61,7 @@ const VideoUploadForm = () => {
     setIsSubmitting(true);
 
     try {
-      const response = await axios.post<ApiResponse>('/api/videos', {
+      const response = await axios.post<ApiResponse>('/api/video', {
         title: data.title,
         description: data.description,
         videoUrl: data.videoUrl,
@@ -69,7 +69,7 @@ const VideoUploadForm = () => {
       });
 
       if (response.data.success) {
-        // Reset form
+     
         form.reset();
         setVideoUploaded(false);
         setUploadProgress(0);
@@ -77,10 +77,11 @@ const VideoUploadForm = () => {
         
         router.push('/allvideos');
       } else {
+        console.log("lll" ,   response.data);
         alert("Failed to save video: " + response.data.message);
       }
     } catch (error) {
-      console.error("❌ Error submitting form:", error);
+      console.error(" Error submitting form:", error);
       const axiosError = error as AxiosError<ApiResponse>;
       alert("Failed to save video: " + (axiosError.response?.data?.message || "Unknown error"));
     } finally {
@@ -91,7 +92,7 @@ const VideoUploadForm = () => {
   return (
     <main className="min-h-screen bg-black pt-20 pb-12">
       <div className="max-w-4xl mx-auto px-6">
-        {/* Header */}
+      
         <div className="mb-8">
           <Link 
             href="/allvideos"
@@ -106,7 +107,7 @@ const VideoUploadForm = () => {
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-          {/* Upload Section */}
+        
           <div className="space-y-6">
             <div className="bg-gradient-to-br from-gray-900/50 to-black/50 backdrop-blur-sm border border-gray-800 rounded-2xl p-8">
               <div className="flex items-center gap-3 mb-6">
@@ -145,7 +146,7 @@ const VideoUploadForm = () => {
               )}
             </div>
 
-            {/* Preview */}
+          
             {videoUploaded && uploadedVideoData && (
               <div className="bg-gradient-to-br from-gray-900/50 to-black/50 backdrop-blur-sm border border-gray-800 rounded-2xl p-6">
                 <h3 className="text-xl font-bold text-white mb-4 flex items-center gap-2">
@@ -163,7 +164,7 @@ const VideoUploadForm = () => {
             )}
           </div>
 
-          {/* Form Section */}
+
           <div className="bg-gradient-to-br from-gray-900/50 to-black/50 backdrop-blur-sm border border-gray-800 rounded-2xl p-8">
             <h2 className="text-2xl font-bold text-white mb-6">Video Details</h2>
             
@@ -196,7 +197,7 @@ const VideoUploadForm = () => {
                 )}
               </div>
 
-              {/* Debug Info */}
+           
               {process.env.NODE_ENV === 'development' && videoUploaded && (
                 <div className="bg-gray-900/50 rounded-lg p-4 text-xs text-gray-400">
                   <p className="font-semibold mb-2">Debug Info:</p>

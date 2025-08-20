@@ -64,7 +64,7 @@ export function NotificationProvider({ children }: { children: ReactNode }) {
     <NotificationContext.Provider value={{ showNotification }}>
       {children}
       
-      {/* Notification Container */}
+   
       <div className="fixed bottom-6 right-6 z-[200] space-y-3">
         {notifications.map((notification) => (
           <div

@@ -72,7 +72,7 @@ const Register = () => {
       <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-gray-900/50 via-black to-black"></div>
       
       <div className="relative z-10 w-full max-w-md">
-        {/* Back Button */}
+       
         <Link 
           href="/"
           className="inline-flex items-center gap-2 text-gray-400 hover:text-white transition-colors duration-300 mb-8"
@@ -81,7 +81,7 @@ const Register = () => {
           Back to Home
         </Link>
 
-        {/* Header */}
+       
         <div className="text-center mb-8">
           <div className="bg-white text-black rounded-full p-3 w-16 h-16 flex items-center justify-center mx-auto mb-4">
             <Video className="w-8 h-8" />
@@ -90,7 +90,7 @@ const Register = () => {
           <p className="text-gray-400">Create your account and start sharing</p>
         </div>
 
-        {/* Form */}
+     
         <div className="bg-gradient-to-b from-gray-900/50 to-black/50 backdrop-blur-sm border border-gray-800 rounded-2xl p-8">
           <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
@@ -174,7 +174,7 @@ const Register = () => {
             </form>
           </Form>
 
-          {/* Footer */}
+      
           <div className="mt-8 text-center">
             <p className="text-gray-400">
               Already have an account?{' '}

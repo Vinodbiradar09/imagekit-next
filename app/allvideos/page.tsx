@@ -83,7 +83,7 @@ const AllVideos = () => {
   return (
     <main className="min-h-screen bg-black pt-20 pb-12">
       <div className="max-w-7xl mx-auto px-6">
-        {/* Header */}
+      
         <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between mb-8">
           <div className="mb-6 lg:mb-0">
             <h1 className="text-4xl font-bold text-white mb-2">All Videos</h1>
@@ -103,7 +103,7 @@ const AllVideos = () => {
           )}
         </div>
 
-        {/* Search and Filters */}
+     
         <div className="flex flex-col sm:flex-row gap-4 mb-8">
           <div className="relative flex-1">
             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
@@ -143,7 +143,7 @@ const AllVideos = () => {
           </div>
         </div>
 
-        {/* Content */}
+      
         {loading ? (
           <LoadingSkeleton />
         ) : (

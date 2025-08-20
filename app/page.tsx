@@ -14,13 +14,12 @@ export default function Home() {
   useEffect(() => {
     const fetchFeaturedVideos = async () => {
       try {
-        console.log("🚀 Fetching featured videos...");
         const response = await axios.get("/api/video");
         
-        // ✅ Fixed: Better response handling with validation
-        console.log("📦 API Response:", response.data);
-        console.log("🔍 Response type:", typeof response.data);
-        console.log("📋 Is array:", Array.isArray(response.data));
+       
+        // console.log(" API Response:", response.data);
+        // console.log("Response type:", typeof response.data);
+        // console.log(" Is array:", Array.isArray(response.data));
         
         let videosData = [];
         
@@ -32,16 +31,16 @@ export default function Home() {
           videosData = response.data.data;
         }
         
-        // ✅ Take only first 6 videos and ensure they have required fields
+      
         const validVideos = videosData
           .filter(video => video && video._id && video.title && video.videoUrl)
           .slice(0, 6);
           
-        console.log("✅ Setting featured videos:", validVideos);
+        console.log(" Setting featured videos:", validVideos);
         setFeaturedVideos(validVideos);
       } catch (error) {
-        console.error("❌ Failed to fetch videos:", error);
-        setFeaturedVideos([]); // ✅ Always set to empty array on error
+        console.error(" Failed to fetch videos:", error);
+        setFeaturedVideos([]); 
       } finally {
         setLoading(false);
       }
@@ -51,7 +50,7 @@ export default function Home() {
 
   return (
     <main className="min-h-screen bg-black text-white">
-      {/* Hero Section */}
+   
       <section className="relative min-h-screen flex items-center justify-center px-6 bg-gradient-to-b from-black via-gray-900 to-black">
         <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-gray-900 via-black to-black opacity-50"></div>
         
@@ -83,7 +82,7 @@ export default function Home() {
           </div>
         </div>
 
-        {/* Floating Animation Elements */}
+     
         <div className="absolute inset-0 overflow-hidden pointer-events-none">
           <div className="absolute top-1/4 left-1/4 w-2 h-2 bg-white rounded-full animate-pulse"></div>
           <div className="absolute top-3/4 right-1/4 w-1 h-1 bg-gray-400 rounded-full animate-bounce"></div>
@@ -91,7 +90,7 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Features Section */}
+    
       <section className="py-20 px-6 bg-gradient-to-b from-black to-gray-900">
         <div className="max-w-7xl mx-auto">
           <h2 className="text-4xl md:text-5xl font-bold text-center mb-16 bg-gradient-to-r from-white to-gray-400 bg-clip-text text-transparent">
@@ -140,7 +139,7 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Featured Videos Section */}
+    
       <section className="py-20 px-6 bg-gradient-to-b from-gray-900 to-black">
         <div className="max-w-7xl mx-auto">
           <div className="flex justify-between items-center mb-12">
@@ -190,7 +189,7 @@ export default function Home() {
         </div>
       </section>
 
-      {/* CTA Section */}
+    
       <section className="py-20 px-6 bg-gradient-to-t from-black to-gray-900">
         <div className="max-w-4xl mx-auto text-center">
           <h2 className="text-4xl md:text-5xl font-bold mb-8 bg-gradient-to-r from-white to-gray-400 bg-clip-text text-transparent">

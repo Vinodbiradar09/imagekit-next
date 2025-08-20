@@ -73,10 +73,10 @@ const FileUpload = ({ onSuccess, onProgress, fileType = "video" }: FileUploadPro
         },
       });
 
-      console.log("✅ Upload successful! Response:", res);
+      console.log(" Upload successful! Response:", res);
       onSuccess(res);
     } catch (error) {
-      console.error("❌ Upload failed:", error);
+      console.error(" Upload failed:", error);
 
       if (error instanceof ImageKitAbortError) {
         setError("Upload was cancelled");
@@ -104,22 +104,22 @@ const FileUpload = ({ onSuccess, onProgress, fileType = "video" }: FileUploadPro
     }
   }, []);
 
-  // ✅ Fixed: Proper file access from FileList
+
   const handleDrop = useCallback((e: React.DragEvent) => {
     e.preventDefault();
     e.stopPropagation();
     setDragActive(false);
 
     if (e.dataTransfer.files && e.dataTransfer.files.length > 0) {
-      processFile(e.dataTransfer.files[0]); // ✅ Fixed: Access first file properly
+      processFile(e.dataTransfer.files[0]); 
     }
   }, []);
 
-  // ✅ Fixed: Proper file access from input
+
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files;
     if (files && files.length > 0) {
-      processFile(files[0]); // ✅ Fixed: Access first file properly
+      processFile(files[0]); 
     }
   };
 
