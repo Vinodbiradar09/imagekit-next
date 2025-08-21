@@ -13,6 +13,7 @@ export default function Header() {
   const [isClient, setIsClient] = useState(false);
 
   useEffect(() => {
+    console.log("sss" , session);
     setIsClient(true);
   }, []);
 
