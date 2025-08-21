@@ -14,10 +14,11 @@ export default function Providers({
 }) {
   return (
     <SessionProvider 
-      session={session} 
-      refetchInterval={0} 
-      refetchOnWindowFocus={true} 
-      refetchWhenOffline={false} 
+      session={session}
+      // Key configuration changes for better session handling
+      refetchInterval={5 * 60} // Refetch every 5 minutes
+      refetchOnWindowFocus={true}
+      refetchWhenOffline={false}
     >
       <ImageKitProvider urlEndpoint={urlEndpoint}>
         <NotificationProvider>

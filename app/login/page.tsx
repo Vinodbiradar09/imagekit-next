@@ -9,7 +9,7 @@ import { useRouter } from "next/navigation";
 import {
   Form,
   FormControl,
-  FormField, 
+  FormField,
   FormItem,
   FormLabel,
   FormMessage,
@@ -24,9 +24,13 @@ export default function Login() {
   const [loading, setLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const { data: session, status } = useSession();
+  const { data: session, status, update } = useSession();
 
-
+  useEffect(() => {
+    if (status === "authenticated" && session) {
+      router.push("/allvideos");
+    }
+  }, [status, session, router]);
 
   const form = useForm<z.infer<typeof userZod>>({
     resolver: zodResolver(userZod),
@@ -49,9 +53,13 @@ export default function Login() {
 
       if (result?.error) {
         setError("Invalid credentials. Please try again.");
-      } else {
-        router.replace("/allvideos");
-        setError(null);
+      } else if (result?.ok) {
+        // Force session update
+        await update();
+        // Small delay to ensure session is updated
+        setTimeout(() => {
+          router.push("/allvideos");
+        }, 100);
       }
     } catch {
       setError("An error occurred. Please try again.");
@@ -59,6 +67,18 @@ export default function Login() {
       setLoading(false);
     }
   };
+
+  // If already authenticated, show loading or redirect immediately
+  if (status === "authenticated") {
+    return (
+      <main className="min-h-screen bg-black flex items-center justify-center px-6 py-12">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-white mx-auto mb-4"></div>
+          <p className="text-white">Redirecting...</p>
+        </div>
+      </main>
+    );
+  }
 
   return (
     <main className="min-h-screen bg-black flex items-center justify-center px-6 py-12">

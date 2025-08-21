@@ -8,11 +8,11 @@ import { useSession } from "next-auth/react";
 
 const AllVideos = () => {
   const [loading, setLoading] = useState(true);
-  const [videos, setVideos] = useState<any>([]);
+  const [videos, setVideos] = useState<any[]>([]);
   const [error, setError] = useState<string | null>(null);
   const [searchTerm, setSearchTerm] = useState("");
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
-  const { data: session } = useSession();
+  const { data: session, status } = useSession();
 
   useEffect(() => {
     const fetchVideos = async () => {
@@ -24,12 +24,14 @@ const AllVideos = () => {
         
         if (Array.isArray(res.data)) {
           setVideos(res.data);
+        } else if (res.data?.data && Array.isArray(res.data.data)) {
+          setVideos(res.data.data);
         } else {
           setVideos([]);
         }
       } catch (error) {
         console.error("Error occurred while fetching videos:", error);
-        setError("Failed to fetch videos");
+        setError("Failed to fetch videos. Please try again later.");
         setVideos([]);
       } finally {
         setLoading(false);
@@ -40,8 +42,8 @@ const AllVideos = () => {
   }, []);
 
   const filteredVideos = videos.filter((video: any) =>
-    video.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    video.description.toLowerCase().includes(searchTerm.toLowerCase())
+    video.title?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    video.description?.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
   const LoadingSkeleton = () => (
@@ -83,7 +85,7 @@ const AllVideos = () => {
   return (
     <main className="min-h-screen bg-black pt-20 pb-12">
       <div className="max-w-7xl mx-auto px-6">
-      
+        {/* Header Section */}
         <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between mb-8">
           <div className="mb-6 lg:mb-0">
             <h1 className="text-4xl font-bold text-white mb-2">All Videos</h1>
@@ -92,7 +94,8 @@ const AllVideos = () => {
             </p>
           </div>
 
-          {session && (
+          {/* Only show upload button if user is authenticated */}
+          {status === "authenticated" && session && (
             <Link 
               href="/upload"
               className="inline-flex items-center gap-2 bg-white text-black px-6 py-3 rounded-full font-semibold hover:bg-gray-200 transition-colors duration-300"
@@ -103,7 +106,7 @@ const AllVideos = () => {
           )}
         </div>
 
-     
+        {/* Search and Filter Section */}
         <div className="flex flex-col sm:flex-row gap-4 mb-8">
           <div className="relative flex-1">
             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
@@ -143,7 +146,7 @@ const AllVideos = () => {
           </div>
         </div>
 
-      
+        {/* Content Section */}
         {loading ? (
           <LoadingSkeleton />
         ) : (
