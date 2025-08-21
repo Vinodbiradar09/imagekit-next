@@ -48,6 +48,7 @@ export default function Header() {
   }
 
   const isAuthenticated = status === "authenticated" && !!session?.user;
+  const username = session?.user?.email ? session.user.email.split("@")[0] : "";
 
   return (
     <header
@@ -85,14 +86,12 @@ export default function Header() {
               <div className="relative group">
                 <button className="flex items-center gap-2 bg-gray-900 text-white rounded-full px-3 py-2 border border-gray-700 hover:border-gray-600">
                   <User className="w-4 h-4" />
-                  <span className="hidden sm:inline truncate max-w-[150px]">
-                    {session.user.email.split("@")[0]}
-                  </span>
+                  <span className="hidden sm:inline truncate max-w-[150px]">{username}</span>
                 </button>
                 <div className="absolute right-0 top-full bg-black border border-gray-800 rounded-xl shadow-lg opacity-0 group-hover:opacity-100 invisible group-hover:visible transition-opacity">
                   <div className="p-4 border-b border-gray-700">
-                    <p className="text-white font-semibold truncate">{session.user.email.split("@")[0]}</p>
-                    <p className="text-gray-400 truncate">{session.user.email}</p>
+                    <p className="text-white font-semibold truncate">{username}</p>
+                    <p className="text-gray-400 truncate">{session?.user?.email ?? ""}</p>
                   </div>
                   <div>
                     <Link href="/upload" className="block px-4 py-2 text-gray-300 hover:bg-gray-900 hover:text-white">
