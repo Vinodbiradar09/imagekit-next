@@ -30,9 +30,12 @@ export async function POST(request: NextRequest) {
   }
 }
 
-export async function GET(request: NextRequest, { params }: { params: { id: string } }) {
+export async function GET(request: NextRequest) {
   await dbConnect();
-  const id = params.id;
+
+  const { pathname } = new URL(request.url);
+  const parts = pathname.split('/');
+  const id = parts[parts.length - 1]; // get dynamic id from URL
 
   if (!id) {
     return NextResponse.json(
@@ -49,7 +52,6 @@ export async function GET(request: NextRequest, { params }: { params: { id: stri
         { status: 404 }
       );
     }
-
     return NextResponse.json({ success: true, video }, { status: 200 });
   } catch (error) {
     console.error("Error fetching video:", error);
@@ -59,3 +61,4 @@ export async function GET(request: NextRequest, { params }: { params: { id: stri
     );
   }
 }
+
