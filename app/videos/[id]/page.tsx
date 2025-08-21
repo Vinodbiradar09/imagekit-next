@@ -77,11 +77,11 @@ export default function VideoDetailPage() {
       <div className="max-w-4xl mx-auto">
         <h1 className="text-4xl font-bold text-white mb-6 tracking-tight">{video.title}</h1>
 
-        <div className="aspect-video bg-gray-900 rounded-2xl overflow-hidden shadow-lg mb-8">
+        <div className="bg-gray-900 rounded-2xl overflow-hidden shadow-lg mb-8">
           <video
             src={video.videoUrl}
             controls
-            className="w-full h-full object-cover rounded-2xl"
+            className="w-full object-contain rounded-2xl"
             preload="metadata"
           />
         </div>
