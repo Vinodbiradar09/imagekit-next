@@ -1,11 +1,11 @@
 "use client";
-import { zodResolver } from "@hookform/resolvers/zod";
+import { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import Link from "next/link";
 import { signIn, useSession } from "next-auth/react";
-import { userZod } from "@/schemas/userSchema";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 import {
   Form,
   FormControl,
@@ -16,50 +16,46 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { useState, useEffect } from "react";
 import { LogIn, Eye, EyeOff, Video, ArrowLeft } from "lucide-react";
+
+
+const userZod = z.object({
+  email: z.string().email(),
+  password: z.string().min(6),
+});
 
 export default function Login() {
   const router = useRouter();
+  const { data: session, status } = useSession();
   const [loading, setLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const { data: session, status, update } = useSession();
 
+  // Redirect on successful authentication
   useEffect(() => {
     if (status === "authenticated" && session) {
-      router.push("/allvideos");
+      router.replace("/allvideos");
     }
   }, [status, session, router]);
 
   const form = useForm<z.infer<typeof userZod>>({
     resolver: zodResolver(userZod),
-    defaultValues: {
-      email: "",
-      password: "",
-    },
+    defaultValues: { email: "", password: "" },
   });
 
   const onSubmit = async (data: z.infer<typeof userZod>) => {
     setLoading(true);
     setError(null);
-
     try {
       const result = await signIn("credentials", {
         redirect: false,
         email: data.email,
         password: data.password,
       });
-
       if (result?.error) {
         setError("Invalid credentials. Please try again.");
-      } else if (result?.ok) {
-        // Force session update
-        await update();
-        // Small delay to ensure session is updated
-        setTimeout(() => {
-          router.push("/allvideos");
-        }, 100);
+      } else {
+        router.replace("/allvideos");
       }
     } catch {
       setError("An error occurred. Please try again.");
@@ -68,31 +64,14 @@ export default function Login() {
     }
   };
 
-  // If already authenticated, show loading or redirect immediately
-  if (status === "authenticated") {
-    return (
-      <main className="min-h-screen bg-black flex items-center justify-center px-6 py-12">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-white mx-auto mb-4"></div>
-          <p className="text-white">Redirecting...</p>
-        </div>
-      </main>
-    );
-  }
-
   return (
     <main className="min-h-screen bg-black flex items-center justify-center px-6 py-12">
-      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-gray-900/50 via-black to-black"></div>
-
+      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-gray-900/50 via-black to-black" />
       <div className="relative z-10 w-full max-w-md">
-        <Link
-          href="/"
-          className="inline-flex items-center gap-2 text-gray-400 hover:text-white transition-colors duration-300 mb-8"
-        >
+        <Link href="/" className="inline-flex items-center gap-2 text-gray-400 hover:text-white mb-8">
           <ArrowLeft className="w-4 h-4" />
           Back to Home
         </Link>
-
         <div className="text-center mb-8">
           <div className="bg-white text-black rounded-full p-3 w-16 h-16 flex items-center justify-center mx-auto mb-4">
             <Video className="w-8 h-8" />
@@ -100,16 +79,12 @@ export default function Login() {
           <h1 className="text-3xl font-bold text-white mb-2">Welcome Back</h1>
           <p className="text-gray-400">Sign in to your Reels Pro account</p>
         </div>
-
         <div className="bg-gradient-to-b from-gray-900/50 to-black/50 backdrop-blur-sm border border-gray-800 rounded-2xl p-8">
           <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
               {error && (
-                <div className="bg-red-900/20 border border-red-800 rounded-lg p-4 text-red-400 text-sm">
-                  {error}
-                </div>
+                <div className="bg-red-900/20 border border-red-800 rounded-lg p-4 text-red-400 text-sm">{error}</div>
               )}
-
               <FormField
                 control={form.control}
                 name="email"
@@ -128,7 +103,6 @@ export default function Login() {
                   </FormItem>
                 )}
               />
-
               <FormField
                 control={form.control}
                 name="password"
@@ -147,6 +121,7 @@ export default function Login() {
                           type="button"
                           onClick={() => setShowPassword(!showPassword)}
                           className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-white transition-colors duration-300"
+                          aria-label="Toggle password visibility"
                         >
                           {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
                         </button>
@@ -156,7 +131,6 @@ export default function Login() {
                   </FormItem>
                 )}
               />
-
               <Button
                 type="submit"
                 disabled={loading}
@@ -164,7 +138,7 @@ export default function Login() {
               >
                 {loading ? (
                   <>
-                    <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-black"></div>
+                    <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-black" />
                     Signing in...
                   </>
                 ) : (
@@ -176,7 +150,6 @@ export default function Login() {
               </Button>
             </form>
           </Form>
-
           <div className="mt-8 text-center">
             <p className="text-gray-400">
               Do not have an account?{' '}
