@@ -3,7 +3,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import Link from "next/link";
-import { signIn, useSession, getSession } from "next-auth/react";
+import { signIn, useSession } from "next-auth/react";
 import { userZod } from "@/schemas/userSchema";
 import { useRouter } from "next/navigation";
 import {
@@ -24,13 +24,9 @@ export default function Login() {
   const [loading, setLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const { data: session, status, update } = useSession();
+  const { data: session, status } = useSession();
 
-  useEffect(() => {
-    if (status === "authenticated" && session && !loading) {
-      router.replace("/allvideos");
-    }
-  }, [session, status, router, loading]);
+
 
   const form = useForm<z.infer<typeof userZod>>({
     resolver: zodResolver(userZod),
@@ -53,10 +49,9 @@ export default function Login() {
 
       if (result?.error) {
         setError("Invalid credentials. Please try again.");
-      } else if (result?.ok) {
-        await update();
-        await getSession();
-        setTimeout(() => router.replace("/allvideos"), 300);
+      } else {
+        router.replace("/allvideos");
+        setError(null);
       }
     } catch {
       setError("An error occurred. Please try again.");
